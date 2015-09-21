@@ -1,8 +1,17 @@
 Redmine::Plugin.register :redmine_overwriting_workflows do
   name 'Redmine Overwriting Workflows plugin'
-  author 'Author name'
-  description 'This is a plugin for Redmine'
+  author 'Maria Syczewska'
+  description 'This is a plugin for Redmine for overwriting workflows within the project'
   version '0.0.1'
-  url 'http://example.com/path/to/plugin'
-  author_url 'http://example.com/about'
+  url 'https://github.com/efigence/redmine_overwriting_workflows'
+  author_url 'https://github.com/efigence'
+
+  permission :manage_workflows, { :project_workflows => [:index, :edit, :reset, :save]}
+  settings :default => {'permissions' => []}, :partial => 'settings/project_workflow_settings'
+
+  ActionDispatch::Callbacks.to_prepare do
+    # require 'redmine_overwriting_roles/patches/projects_helper_patch'
+    # require 'redmine_overwriting_roles/patches/user_patch'
+  end
+
 end
