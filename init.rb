@@ -7,11 +7,10 @@ Redmine::Plugin.register :redmine_overwriting_workflows do
   author_url 'https://github.com/efigence'
 
   permission :manage_workflows, { :project_workflows => [:index, :edit, :reset, :save]}
-  settings :default => {'permissions' => []}, :partial => 'settings/project_workflow_settings'
 
   ActionDispatch::Callbacks.to_prepare do
-    # require 'redmine_overwriting_roles/patches/projects_helper_patch'
-    # require 'redmine_overwriting_roles/patches/user_patch'
+    require 'redmine_overwriting_workflows/patches/workflow_transition_patch'
+    require 'redmine_overwriting_workflows/patches/issue_status_patch'
   end
 
 end

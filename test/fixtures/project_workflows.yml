@@ -1,0 +1,8 @@
+---
+WorkflowTransitions_189:
+  new_status_id: 4
+  role_id: 2
+  old_status_id: 1
+  id: 1
+  tracker_id: 2
+  type: WorkflowTransition
