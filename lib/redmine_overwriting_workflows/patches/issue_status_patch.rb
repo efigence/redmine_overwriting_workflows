@@ -7,8 +7,7 @@ module RedmineOverwritingWorkflows
 
           def new_statuses_allowed_to_with_project(roles, tracker, author=false, assignee=false, context = nil)
             if context != nil && contect.is_a?(Project)
-              workflows = ProjectWorkflows.where("project_id =?", context.id)
-              return workflows if !workflows.empty?
+              workflows = ProjectWorkflow.where("project_id =?", context.id)
             end
             new_statuses_allowed_to_without_project(roles, tracker, author=false, assignee=false)
           end
