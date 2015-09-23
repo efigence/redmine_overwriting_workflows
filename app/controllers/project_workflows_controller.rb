@@ -5,7 +5,7 @@ class ProjectWorkflowsController < ApplicationController
   def index
     @roles = Role.sorted.select(&:consider_workflow?)
     @trackers = Tracker.sorted
-    @workflow_counts = WorkflowTransition.group(:tracker_id, :role_id).count
+    @workflow_counts =WorkflowTransition.group(:tracker_id, :role_id).count
   end
 
   def edit
@@ -22,6 +22,9 @@ class ProjectWorkflowsController < ApplicationController
     else
       render :action => 'edit'
     end
+  end
+
+  def copy
   end
 
   private
