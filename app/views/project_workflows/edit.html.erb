@@ -1,7 +1,6 @@
 
 <div class="contextual">
   <%= link_to l(:button_copy), {:action => 'copy'}, :class => 'icon icon-copy' %>
-  <%= link_to l(:field_summary), {:action => 'index'}, :class => 'icon icon-summary' %>
 </div>
 <br><br>
 
@@ -9,8 +8,8 @@
 
 <div class="tabs">
   <ul>
-    <li><%= link_to l(:label_status_transitions), workflows_edit_path(:role_id => @roles, :tracker_id => @trackers), :class => 'selected' %></li>
-    <li><%= link_to l(:label_fields_permissions), workflows_permissions_path(:role_id => @roles, :tracker_id => @trackers) %></li>
+    <li><%= link_to l(:label_status_transitions), edit_project_workflow_path(:role_id => @roles, :tracker_id => @trackers), :class => 'selected' %></li>
+    <li><%= link_to l(:label_fields_permissions), edit_project_workflow_permissions_path(:role_id => @roles, :tracker_id => @trackers) %></li>
   </ul>
 </div>
 

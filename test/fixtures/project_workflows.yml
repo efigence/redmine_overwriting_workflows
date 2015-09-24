@@ -1,5 +1,5 @@
 ---
-WorkflowTransitions_189:
+WorkflowTransitions_001:
   new_status_id: 4
   role_id: 2
   old_status_id: 1
