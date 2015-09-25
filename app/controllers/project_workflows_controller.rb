@@ -1,38 +1,43 @@
-class ProjectWorkflowsController < ApplicationController
+class ProjectWorkflowsController < WorkflowsController
 
   before_filter :find_project
   before_filter :check_permissions
 
-  # def index
-  #   @roles = Role.sorted.select(&:consider_workflow?)
-  #   @trackers = Tracker.sorted
-  #   @workflow_counts = WorkflowTransition.group(:tracker_id, :role_id).count
-  #   WorkflowTransition.includes(:project_workflows).each do |workflow|
-  #     if workflow.project_workflows.present?
-  #       @workflow_counts[[workflow.tracker_id, workflow.role_id]] = ProjectWorkflow
-  #           .where(project_id: @project.id, tracker_id: workflow.tracker_id, role_id: workflow.role_id)
-  #           .group(:tracker_id, :role_id)
-  #           .count.values[0]
-  #     end
-  #   end
-  # end
-
   def edit
-    @workflows = WorkflowTransition.where(tracker_id: params[:tracker_id], role_id: params[:role_id])
-    @project_workflows = find_project_workflows || build_project_workflows
+    find_trackers_roles_and_statuses_for_edit
+
+    if @trackers && @roles && @statuses.any?
+      unless ProjectWorkflow.where(project_id: @project.id).empty?
+        workflows = ProjectWorkflow.where(project_id: @project.id, :role_id => @roles.map(&:id), :tracker_id => @trackers.map(&:id))
+      else
+        workflows = WorkflowTransition.where(:role_id => @roles.map(&:id), :tracker_id => @trackers.map(&:id))
+      end
+      @workflows = {}
+      @workflows['always'] = workflows.select {|w| !w.author && !w.assignee}
+      @workflows['author'] = workflows.select {|w| w.author}
+      @workflows['assignee'] = workflows.select {|w| w.assignee}
+    end
   end
 
   def permissions
   end
 
   def save
-    @workflows = WorkflowTransition.where(tracker_id: params[:tracker_id], role_id: params[:role_id])
-    @project_workflows = find_project_workflows || build_project_workflows
-    if @project_workflows.save
+      byebug
+    if request.post? && @roles && @trackers && params[:transitions]
+      transitions = params[:transitions].deep_dup
+      transitions.each do |old_status_id, transitions_by_new_status|
+        transitions_by_new_status.each do |new_status_id, transition_by_rule|
+          transition_by_rule.reject! {|rule, transition| transition == 'no_change'}
+        end
+      end
+      unless ProjectWorkflow.where(project_id: @project.id).empty?
+        ProjectWorkflow.replace_permissions(@trackers, @roles, transitions)
+      else
+        WorkflowPermission.replace_permissions(@trackers, @roles, transitions)
+      end
       flash[:notice] = l(:notice_successful_update)
-      redirect_to "/projects/#{@project.id}/settings" # change transitions/permissions
-    else
-      render :action => 'edit'
+      return
     end
   end
 
