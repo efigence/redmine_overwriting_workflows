@@ -2,7 +2,7 @@ class ProjectWorkflow < ActiveRecord::Base
   unloadable
 
   belongs_to :workflow, :class_name => 'WorkflowTransition'
-  belongs_to :issue_status
+  belongs_to :new_status, :class_name => 'IssueStatus'
 
   self.inheritance_column = nil
 
