@@ -2,6 +2,7 @@ class ProjectWorkflowsController < WorkflowsController
 
   before_filter :find_project
   before_filter :check_permissions
+  before_filter :create_project_workflows, only: [:save]
 
   def edit
     find_trackers_roles_and_statuses_for_edit
@@ -19,10 +20,8 @@ class ProjectWorkflowsController < WorkflowsController
     end
   end
 
-  def permissions
-  end
-
   def save
+    @project_workflow = ProjectWorkflow.find(params[:project_workflow_id])
     if request.post? && @roles && @trackers && params[:transitions]
       transitions = params[:transitions].deep_dup
       transitions.each do |old_status_id, transitions_by_new_status|
@@ -30,11 +29,11 @@ class ProjectWorkflowsController < WorkflowsController
           transition_by_rule.reject! {|rule, transition| transition == 'no_change'}
         end
       end
-      unless ProjectWorkflow.where(project_id: @project.id).empty?
-        ProjectWorkflow.replace_permissions(@trackers, @roles, transitions)
-      else
-        WorkflowPermission.replace_permissions(@trackers, @roles, transitions)
-      end
+      # unless ProjectWorkflow.where(project_id: @project.id).empty?
+        ProjectWorkflow.replace_workflows(@trackers, @roles, transitions)
+      # else
+        # WorkflowPermission.replace_workflows(@trackers, @roles, transitions)
+      # end
       flash[:notice] = l(:notice_successful_update)
       return
     end
@@ -44,15 +43,14 @@ class ProjectWorkflowsController < WorkflowsController
   end
 
   private
-  def build_project_workflows
-    @workflows.each do |workflow|
-      ProjectWorkflow.new(workflow.attributes.merge({project_id: @project.id, workflow_transition_id: workflow.id}))
-    end
-  end
-
-  def find_project_workflows
-    @workflows.each do |workflow|
-      ProjectWorkflow.where(project_id: @project.id, workflow_transition_id: workflow.id)
+  def create_project_workflows
+    if ProjectWorkflow.where(project_id: @project.id).empty?
+      WorkflowTransition.find_each do |workflow|
+        ProjectWorkflow.create(workflow.attributes.merge({project_id: @project.id,
+                                  workflow_transition_id: workflow.id,
+                                  role_id: workflow.role_id,
+                                  tracker_id: workflow.tracker_id}))
+      end
     end
   end
 
