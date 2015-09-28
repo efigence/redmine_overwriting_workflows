@@ -9,9 +9,10 @@ Redmine::Plugin.register :redmine_overwriting_workflows do
   permission :manage_workflows, { :project_workflows => [:index, :edit, :save]}
 
   ActionDispatch::Callbacks.to_prepare do
-    require 'redmine_overwriting_workflows/patches/workflow_transition_patch'
+    require 'redmine_overwriting_workflows/patches/issue_patch'
     require 'redmine_overwriting_workflows/patches/issue_status_patch'
     require 'redmine_overwriting_workflows/patches/projects_helper_patch'
+    require 'redmine_overwriting_workflows/patches/workflow_transition_patch'
   end
 
 end

@@ -23,7 +23,6 @@ class ProjectWorkflowsController < WorkflowsController
   end
 
   def save
-      byebug
     if request.post? && @roles && @trackers && params[:transitions]
       transitions = params[:transitions].deep_dup
       transitions.each do |old_status_id, transitions_by_new_status|
