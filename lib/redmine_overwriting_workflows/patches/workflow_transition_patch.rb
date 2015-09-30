@@ -6,7 +6,6 @@ module RedmineOverwritingWorkflows
           unloadable
 
           has_many :project_workflows
-
         end
       end
     end

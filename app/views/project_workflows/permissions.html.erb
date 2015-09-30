@@ -7,8 +7,8 @@
 
 <div class="tabs">
   <ul>
-    <li><%= link_to l(:label_status_transitions), edit_project_workflow_path(:role_id => @roles, :tracker_id => @trackers) %></li>
-    <li><%= link_to l(:label_fields_permissions), edit_project_workflow_permissions_path(:role_id => @roles, :tracker_id => @trackers), :class => 'selected' %></li>
+    <li><%= link_to l(:label_status_transitions), edit_project_workflows_path(:role_id => @roles, :tracker_id => @trackers) %></li>
+    <li><%= link_to l(:label_fields_permissions), edit_project_workflows_permissions_path(:role_id => @roles, :tracker_id => @trackers), :class => 'selected' %></li>
   </ul>
 </div>
 

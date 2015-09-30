@@ -1,4 +1,4 @@
-require File.expand_path("../../test_helper", __FILE__)
+require File.expand_path('../../test_helper', __FILE__)
 
 class ProjectWorkflowsControllerTest < Redmine::IntegrationTest
   fixtures :users, :projects, :roles, :members, :member_roles
@@ -8,12 +8,12 @@ class ProjectWorkflowsControllerTest < Redmine::IntegrationTest
   end
 
   def test_should_allow_admin_to_see_worfklow_settings
-    log_user("admin", "admin")
+    log_user('admin', 'admin')
     assert_equal true, User.current.allowed_to?(:manage_workflows, @project)
 
     get settings_project_path(@project)
     assert_response :success
-    assert_select "#tab-workflows"
+    assert_select '#tab-workflows'
 
     get project_workflows_path(@project)
     assert_response :success
@@ -23,12 +23,12 @@ class ProjectWorkflowsControllerTest < Redmine::IntegrationTest
   end
 
   def test_should_allow_project_manager_to_see_roles_settings
-    log_user("jsmith", "jsmith")
+    log_user('jsmith', 'jsmith')
     assert_equal true, User.current.allowed_to?(:manage_workflows, @project)
 
     get settings_project_path(@project)
     assert_response :success
-    assert_select "#tab-workflows"
+    assert_select '#tab-workflows'
 
     get project_workflows_path(@project)
     assert_response :success
@@ -38,12 +38,12 @@ class ProjectWorkflowsControllerTest < Redmine::IntegrationTest
   end
 
   def test_should_not_allow_to_see_roles_settings
-    log_user("dlopper", "foo")
+    log_user('dlopper', 'foo')
     assert_equal false, User.current.allowed_to?(:manage_workflows, @project)
 
     get settings_project_path(@project)
     assert_response :success
-    assert_select "#tab-workflows", false
+    assert_select '#tab-workflows', false
 
     get project_workflows_path(@project)
     assert_response :redirect
@@ -51,6 +51,4 @@ class ProjectWorkflowsControllerTest < Redmine::IntegrationTest
     get edit_project_workflows_path(@project)
     assert_response :redirect
   end
-
 end
-

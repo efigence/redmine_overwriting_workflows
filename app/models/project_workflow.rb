@@ -9,17 +9,17 @@ class ProjectWorkflow < ActiveRecord::Base
   self.inheritance_column = nil
 
   attr_accessible :project_id,
-  :id,
-  :workflow_transition_id,
-  :tracker_id,
-  :old_status_id,
-  :new_status_id,
-  :role_id,
-  :assignee,
-  :author,
-  :type,
-  :field_name,
-  :rule
+                  :id,
+                  :workflow_transition_id,
+                  :tracker_id,
+                  :old_status_id,
+                  :new_status_id,
+                  :role_id,
+                  :assignee,
+                  :author,
+                  :type,
+                  :field_name,
+                  :rule
 
   # def self.replace_workflows(trackers, roles, transitions, context)
   #   trackers = Array.wrap trackers

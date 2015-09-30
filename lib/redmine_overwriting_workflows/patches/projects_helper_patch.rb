@@ -30,7 +30,6 @@ module RedmineOverwritingWorkflows
           end
 
           alias_method_chain :project_settings_tabs, :project_workflows
-
         end
       end
     end
