@@ -1,8 +1,7 @@
-class ProjectWorkflowsController < WorkflowsController
+class ProjectWorkflowsController < ApplicationController
 
   before_filter :find_project
   before_filter :check_permissions
-  before_filter :create_project_workflows, only: [:save]
 
   def edit
     find_trackers_roles_and_statuses_for_edit
@@ -22,6 +21,7 @@ class ProjectWorkflowsController < WorkflowsController
 
   def save
     byebug
+    find_trackers_roles_and_statuses_for_edit
     find_project_workflows
     if request.post? && @roles && @trackers && params[:transitions]
       transitions = params[:transitions].deep_dup
@@ -34,9 +34,6 @@ class ProjectWorkflowsController < WorkflowsController
       flash[:notice] = l(:notice_successful_update)
       return
     end
-  end
-
-  def copy
   end
 
   private
@@ -55,13 +52,43 @@ class ProjectWorkflowsController < WorkflowsController
     ProjectWorkflow.where(project_id: @project.id, role_id: @roles.map(&:id), tracker_id: @trackers.map(&:id))
   end
 
-  # def assign_project_workflows
-  #   @project_workflows = find_project_workflows || create_project_workflows
-  # end
-
   def check_permissions
     unless User.current.admin? || User.current.allowed_to?(:manage_workflows, @project)
       redirect_to home_path
     end
+  end
+
+  def find_trackers_roles_and_statuses_for_edit
+    find_roles
+    find_trackers
+    find_statuses
+  end
+
+  def find_roles
+    ids = Array.wrap(params[:role_id])
+    if ids == ['all']
+      @roles = Role.sorted.to_a
+    elsif ids.present?
+      @roles = Role.where(:id => ids).to_a
+    end
+    @roles = nil if @roles.blank?
+  end
+
+  def find_trackers
+    ids = Array.wrap(params[:tracker_id])
+    if ids == ['all']
+      @trackers = Tracker.sorted.to_a
+    elsif ids.present?
+      @trackers = Tracker.where(:id => ids).to_a
+    end
+    @trackers = nil if @trackers.blank?
+  end
+
+  def find_statuses
+    @used_statuses_only = (params[:used_statuses_only] == '0' ? false : true)
+    if @trackers && @used_statuses_only
+      @statuses = @trackers.map(&:issue_statuses).flatten.uniq.sort.presence
+    end
+    @statuses ||= IssueStatus.sorted.to_a
   end
 end
