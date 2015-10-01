@@ -1,6 +1,8 @@
 require File.expand_path('../../test_helper', __FILE__)
 
 class IssueStatusTest < ActiveSupport::TestCase
+  fixtures :users, :projects, :roles, :trackers, :issue_statuses, :projects_trackers, :enumerations, :issues
+
   def test_new_statuses_allowed_to
     WorkflowTransition.delete_all
     WorkflowTransition.create!(role_id: 1,
@@ -27,7 +29,6 @@ class IssueStatusTest < ActiveSupport::TestCase
                                author: false,
                                assignee: false)
 
-    ProjectWorkflow.delete_all
     ProjectWorkflow.create!(project_id: 1,
                             role_id: 1,
                             tracker_id: 1,

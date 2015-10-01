@@ -40,21 +40,19 @@ class ProjectWorkflowsController < ApplicationController
     @statuses.each {|status| @permissions[status.id] ||= {}}
   end
 
-  def save
-    byebug
-    find_project_workflows
-    if request.post? && @roles && @trackers && params[:transitions]
-      transitions = params[:transitions].deep_dup
-      transitions.each do |_old_status_id, transitions_by_new_status|
-        transitions_by_new_status.each do |_new_status_id, transition_by_rule|
-          transition_by_rule.reject! { |_rule, transition| transition == 'no_change' }
-        end
-      end
-      ProjectWorkflow.replace_workflows(@trackers, @roles, transitions)
-      flash[:notice] = l(:notice_successful_update)
-      return
-    end
-  end
+  # def save
+  #   find_project_workflows
+  #   if request.post? && @roles && @trackers && params[:transitions]
+  #     transitions = params[:transitions].deep_dup
+  #     transitions.each do |_old_status_id, transitions_by_new_status|
+  #       transitions_by_new_status.each do |_new_status_id, transition_by_rule|
+  #         transition_by_rule.reject! { |_rule, transition| transition == 'no_change' }
+  #       end
+  #     end
+  #     ProjectWorkflow.replace_workflows(@trackers, @roles, transitions)
+  #     flash[:notice] = l(:notice_successful_update)
+  #   end
+  # end
 
   private
 

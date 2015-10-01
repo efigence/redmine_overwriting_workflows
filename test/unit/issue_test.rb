@@ -1,6 +1,8 @@
 require File.expand_path('../../test_helper', __FILE__)
 
 class IssueTest < ActiveSupport::TestCase
+  fixtures :users, :projects, :roles, :trackers, :issue_statuses, :projects_trackers, :enumerations, :issues
+
   def test_new_statuses_allowed_to
     WorkflowTransition.delete_all
     WorkflowTransition.create!(role_id: 1,
@@ -11,9 +13,8 @@ class IssueTest < ActiveSupport::TestCase
                                assignee: false)
 
     status = IssueStatus.find(1)
-    role = Role.find(1)
     tracker = Tracker.find(1)
-    user = User.find(2)
+    user = User.find(1)
     issue = Issue.generate!(tracker: tracker,
                             status: status,
                             project_id: 1,
@@ -40,9 +41,8 @@ class IssueTest < ActiveSupport::TestCase
                             assignee: false)
 
     status = IssueStatus.find(1)
-    role = Role.find(1)
     tracker = Tracker.find(1)
-    user = User.find(2)
+    user = User.find(1)
     project = Project.find(1)
     issue = Issue.generate!(tracker: tracker,
                             status: status,
