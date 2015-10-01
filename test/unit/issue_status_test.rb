@@ -27,8 +27,8 @@ class IssueStatusTest < ActiveSupport::TestCase
                                author: false,
                                assignee: false)
 
+    ProjectWorkflow.delete_all
     ProjectWorkflow.create!(project_id: 1,
-                            workflow_transition_id: 1,
                             role_id: 1,
                             tracker_id: 1,
                             old_status_id: 1,

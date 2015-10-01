@@ -32,7 +32,6 @@ class IssueTest < ActiveSupport::TestCase
                                assignee: false)
 
     ProjectWorkflow.create!(project_id: 1,
-                            workflow_transition_id: 1,
                             role_id: 1,
                             tracker_id: 1,
                             old_status_id: 1,
