@@ -1,4 +1,5 @@
 module ProjectWorkflowsHelper
+
   def options_for_workflow_select(name, objects, selected, options = {})
     option_tags = ''.html_safe
     multiple = false

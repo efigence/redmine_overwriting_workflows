@@ -6,24 +6,17 @@ module RedmineOverwritingWorkflows
       def self.included(base)
         base.class_eval do
           unloadable
+          require File.expand_path(File.dirname(__FILE__) + '/../../../../../app/controllers/workflows_controller')
+          include WorkflowsHelper
 
           def project_settings_tabs_with_project_workflows
             tabs = project_settings_tabs_without_project_workflows
-
             if User.current.allowed_to?(:manage_workflows, @project) || User.current.admin?
-
               tabs << {
-                name: 'workflows_transitions',
-                action: :manage_project_workflow_transitions,
-                partial: 'projects/settings/workflow_transitions',
-                label: :project_workflow_transitions_settings
-              }
-
-              tabs << {
-                name: 'workflows_permissions',
-                action: :manage_project_workflow_permissions,
-                partial: 'projects/settings/workflow_permissions',
-                label: :project_workflow_permissions_settings
+                name: 'workflows',
+                action: :manage_project_workflows,
+                partial: 'projects/settings/workflows',
+                label: :project_workflow_settings
               }
             end
             tabs
