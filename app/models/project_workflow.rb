@@ -5,7 +5,7 @@ class ProjectWorkflow < ActiveRecord::Base
 
   validates_presence_of :new_status_id
 
-  self.inheritance_column = nil
+  self.inheritance_column = :_type_disabled
 
   attr_accessible :project_id,
                   :id,

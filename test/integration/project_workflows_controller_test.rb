@@ -11,14 +11,14 @@ class ProjectWorkflowsControllerTest < Redmine::IntegrationTest
     log_user('admin', 'admin')
     assert_equal true, User.current.allowed_to?(:manage_workflows, @project)
 
-    get settings_project_path(@project)
-    assert_response :success
-    assert_select '#tab-workflows'
-
-    get project_workflows_path(@project)
-    assert_response :success
+    # get settings_project_path(@project)
+    # assert_response :success
+    # assert_select '#tab-workflows'
 
     get edit_project_workflows_path(@project)
+    assert_response :success
+
+    get edit_project_workflows_permissions_path(@project)
     assert_response :success
   end
 
@@ -26,14 +26,14 @@ class ProjectWorkflowsControllerTest < Redmine::IntegrationTest
     log_user('jsmith', 'jsmith')
     assert_equal true, User.current.allowed_to?(:manage_workflows, @project)
 
-    get settings_project_path(@project)
-    assert_response :success
-    assert_select '#tab-workflows'
-
-    get project_workflows_path(@project)
-    assert_response :success
+    # get settings_project_path(@project)
+    # assert_response :success
+    # assert_select '#tab-workflows'
 
     get edit_project_workflows_path(@project)
+    assert_response :success
+
+    get edit_project_workflows_permissions_path(@project)
     assert_response :success
   end
 
@@ -41,14 +41,14 @@ class ProjectWorkflowsControllerTest < Redmine::IntegrationTest
     log_user('dlopper', 'foo')
     assert_equal false, User.current.allowed_to?(:manage_workflows, @project)
 
-    get settings_project_path(@project)
-    assert_response :success
-    assert_select '#tab-workflows', false
-
-    get project_workflows_path(@project)
-    assert_response :redirect
+    # get settings_project_path(@project)
+    # assert_response :success
+    # assert_select '#tab-workflows', false
 
     get edit_project_workflows_path(@project)
+    assert_response :redirect
+
+    get edit_project_workflows_permissions_path(@project)
     assert_response :redirect
   end
 end

@@ -29,17 +29,17 @@ class ProjectWorkflowsController < WorkflowsController
     end
   end
 
-  # def permissions
-  #   return unless @roles && @trackers
-  #   @fields = (Tracker::CORE_FIELDS_ALL - @trackers.map(&:disabled_core_fields).reduce(:&)).map {|field| [field, l("field_"+field.sub(/_id$/, ''))]}
-  #   @custom_fields = @trackers.map(&:custom_fields).flatten.uniq.sort
-  #   if !find_project_workflows.empty?
-  #     @permissions = find_project_workflows
-  #   else
-  #     @permissions = create_project_workflows(WorkflowPermission)
-  #   end
-  #   @statuses.each {|status| @permissions[status.id] ||= {}}
-  # end
+  def permissions
+    return unless @roles && @trackers
+    @fields = (Tracker::CORE_FIELDS_ALL - @trackers.map(&:disabled_core_fields).reduce(:&)).map {|field| [field, l("field_"+field.sub(/_id$/, ''))]}
+    @custom_fields = @trackers.map(&:custom_fields).flatten.uniq.sort
+    if !find_project_workflows.empty?
+      @permissions = find_project_workflows
+    else
+      @permissions = create_project_workflows(WorkflowPermission)
+    end
+    @statuses.each {|status| @permissions[status.id] ||= {}}
+  end
 
   private
 
@@ -48,8 +48,7 @@ class ProjectWorkflowsController < WorkflowsController
     type.where(role_id: @roles.map(&:id), tracker_id: @trackers.map(&:id)).each do |workflow|
       workflows << ProjectWorkflow.new(workflow.attributes.merge(project_id: @project.id,
         role_id: workflow.role_id,
-        tracker_id: workflow.tracker_id,
-        type: type.to_s))
+        tracker_id: workflow.tracker_id))
     end
     workflows
   end
