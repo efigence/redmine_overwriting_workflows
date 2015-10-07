@@ -46,9 +46,16 @@ class ProjectWorkflowsController < WorkflowsController
   def create_project_workflows(type)
     workflows = []
     type.where(role_id: @roles.map(&:id), tracker_id: @trackers.map(&:id)).each do |workflow|
-      workflows << ProjectWorkflow.new(workflow.attributes.merge(project_id: @project.id,
+      workflows << ProjectWorkflow.new(project_id: @project.id,
+        tracker_id: workflow.tracker_id,
+        old_status_id: workflow.old_status_id,
+        new_status_id: workflow.new_status_id,
         role_id: workflow.role_id,
-        tracker_id: workflow.tracker_id))
+        assignee: workflow.assignee,
+        author: workflow.author,
+        kind: workflow.type.to_s,
+        field_name: workflow.field_name,
+        rule: workflow.rule)
     end
     workflows
   end

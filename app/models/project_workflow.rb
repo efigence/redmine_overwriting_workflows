@@ -5,8 +5,6 @@ class ProjectWorkflow < ActiveRecord::Base
 
   validates_presence_of :new_status_id
 
-  self.inheritance_column = :_type_disabled
-
   attr_accessible :project_id,
                   :id,
                   :tracker_id,
@@ -15,7 +13,7 @@ class ProjectWorkflow < ActiveRecord::Base
                   :role_id,
                   :assignee,
                   :author,
-                  :type,
+                  :kind,
                   :field_name,
                   :rule
 

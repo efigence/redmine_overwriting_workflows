@@ -8,7 +8,7 @@ class CreateProjectWorkflows < ActiveRecord::Migration
       t.column :role_id, :integer, limit: 4, default: 0, null: false
       t.column :assignee, :boolean, limit: 1, default: false, null: false
       t.column :author, :boolean, limit: 1, default: false, null: false
-      t.column :type, :string, limit: 30
+      t.column :kind, :string, limit: 30
       t.column :field_name, :string, limit: 30
       t.column :rule, :string, limit: 30
     end
