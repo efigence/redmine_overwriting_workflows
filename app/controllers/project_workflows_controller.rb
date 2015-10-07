@@ -9,7 +9,7 @@ class ProjectWorkflowsController < WorkflowsController
     if !find_project_workflows.empty?
       workflows = find_project_workflows
     else
-      workflows = create_project_workflows(WorkflowTransition)
+      workflows = create_project_workflows
     end
     @workflows = {}
     @workflows['always'] = workflows.select { |w| !w.author && !w.assignee }
@@ -33,19 +33,25 @@ class ProjectWorkflowsController < WorkflowsController
     return unless @roles && @trackers
     @fields = (Tracker::CORE_FIELDS_ALL - @trackers.map(&:disabled_core_fields).reduce(:&)).map {|field| [field, l("field_"+field.sub(/_id$/, ''))]}
     @custom_fields = @trackers.map(&:custom_fields).flatten.uniq.sort
-    if !find_project_workflows.empty?
-      @permissions = find_project_workflows
-    else
-      @permissions = create_project_workflows(WorkflowPermission)
-    end
+    @permissions = find_project_workflow_permissions
     @statuses.each {|status| @permissions[status.id] ||= {}}
+
+    if request.post? && @roles && @trackers && params[:permissions]
+      permissions = params[:permissions].deep_dup
+      permissions.each { |field, rule_by_status_id|
+        rule_by_status_id.reject! {|status_id, rule| rule == 'no_change'}
+      }
+      ProjectWorkflow.replace_workflow_permissions(@trackers, @roles, permissions, @project)
+      flash[:notice] = l(:notice_successful_update)
+      return
+    end
   end
 
   private
 
-  def create_project_workflows(type)
+  def create_project_workflows
     workflows = []
-    type.where(role_id: @roles.map(&:id), tracker_id: @trackers.map(&:id)).each do |workflow|
+    WorkflowTransition.where(role_id: @roles.map(&:id), tracker_id: @trackers.map(&:id)).each do |workflow|
       workflows << ProjectWorkflow.new(project_id: @project.id,
         tracker_id: workflow.tracker_id,
         old_status_id: workflow.old_status_id,
@@ -53,15 +59,19 @@ class ProjectWorkflowsController < WorkflowsController
         role_id: workflow.role_id,
         assignee: workflow.assignee,
         author: workflow.author,
-        kind: workflow.type.to_s,
+        kind: "WorkflowTransition",
         field_name: workflow.field_name,
         rule: workflow.rule)
     end
     workflows
   end
 
-  def find_project_workflows
-    ProjectWorkflow.where(project_id: @project.id, role_id: @roles.map(&:id), tracker_id: @trackers.map(&:id))
+  def find_project_workflows(type = WorkflowTransition)
+    ProjectWorkflow.where(project_id: @project.id, kind: type, role_id: @roles.map(&:id), tracker_id: @trackers.map(&:id))
+  end
+
+  def find_project_workflow_permissions
+    find_project_workflows(WorkflowPermission).rules_by_status_id(@trackers, @roles)
   end
 
   def check_permissions

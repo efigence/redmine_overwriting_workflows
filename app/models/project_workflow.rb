@@ -17,12 +17,54 @@ class ProjectWorkflow < ActiveRecord::Base
                   :field_name,
                   :rule
 
+  def self.rules_by_status_id(trackers, roles)
+    ProjectWorkflow.where(tracker_id: trackers.map(&:id), role_id: roles.map(&:id), kind: "WorkflowPermission").inject({}) do |h, w|
+      h[w.old_status_id] ||= {}
+      h[w.old_status_id][w.field_name] ||= []
+      h[w.old_status_id][w.field_name] << w.rule
+      h
+    end
+  end
+
+  def self.replace_workflow_permissions(trackers, roles, permissions, context)
+    trackers = Array.wrap trackers
+    roles = Array.wrap roles
+
+    transaction do
+      permissions.each { |status_id, rule_by_field|
+        rule_by_field.each { |field, rule|
+          destroy_all(tracker_id: trackers.map(&:id),
+                            role_id: roles.map(&:id),
+                            old_status_id: status_id,
+                            field_name: field,
+                            kind: "WorkflowPermission")
+          if rule.present?
+            trackers.each do |tracker|
+              roles.each do |role|
+                ProjectWorkflow.create(role_id: role.id,
+                                                          project_id: context.id,
+                                                          tracker_id: tracker.id,
+                                                          old_status_id: status_id,
+                                                          field_name: field,
+                                                          rule: rule,
+                                                          kind: "WorkflowPermission")
+              end
+            end
+          end
+        }
+      }
+    end
+  end
+
   def self.replace_workflows(trackers, roles, transitions, context)
     trackers = Array.wrap trackers
     roles = Array.wrap roles
 
     transaction do
-      records = ProjectWorkflow.where(project_id: context.id, tracker_id: trackers.map(&:id), role_id: roles.map(&:id)).to_a
+      records = ProjectWorkflow.where(project_id: context.id,
+                                                        tracker_id: trackers.map(&:id),
+                                                        role_id: roles.map(&:id),
+                                                        kind: "WorkflowPermission").to_a
 
       transitions.each do |old_status_id, transitions_by_new_status|
         transitions_by_new_status.each do |new_status_id, transition_by_rule|
@@ -35,6 +77,7 @@ class ProjectWorkflow < ActiveRecord::Base
                   r.new_status_id == new_status_id.to_i &&
                   r.tracker_id == tracker.id &&
                   r.role_id == role.id &&
+                  r.kind == "WorkflowPermission" &&
                   !r.destroyed?
                 }
 
@@ -50,7 +93,12 @@ class ProjectWorkflow < ActiveRecord::Base
 
                 if transition == "1" || transition == true
                   unless w
-                    w = ProjectWorkflow.new(project_id: context.id, old_status_id: old_status_id, new_status_id: new_status_id, tracker_id: tracker.id, role_id: role.id)
+                    w = ProjectWorkflow.new(project_id: context.id,
+                                                            old_status_id: old_status_id,
+                                                            new_status_id: new_status_id,
+                                                            tracker_id: tracker.id,
+                                                            role_id: role.id,
+                                                            kind: "WorkflowPermission")
                     records << w
                   end
                   w.author = true if rule == "author"
