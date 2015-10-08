@@ -6,8 +6,6 @@ module RedmineOverwritingWorkflows
       def self.included(base)
         base.class_eval do
           unloadable
-          require File.expand_path(File.dirname(__FILE__) + '/../../../../../app/controllers/workflows_controller')
-          include WorkflowsHelper
 
           def project_settings_tabs_with_project_workflows
             tabs = project_settings_tabs_without_project_workflows

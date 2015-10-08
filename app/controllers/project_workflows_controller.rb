@@ -1,8 +1,9 @@
 class ProjectWorkflowsController < WorkflowsController
 
+  skip_before_filter :require_admin
   before_filter :find_project
   before_filter :check_permissions
-  before_filter :find_trackers_roles_and_statuses_for_edit, only: [:edit, :permissions]
+  before_filter :find_trackers_roles_and_statuses_for_edit, only: [:edit, :save, :permissions]
 
   def edit
     return unless @trackers && @roles && @statuses.any?
@@ -15,8 +16,10 @@ class ProjectWorkflowsController < WorkflowsController
     @workflows['always'] = workflows.select { |w| !w.author && !w.assignee }
     @workflows['author'] = workflows.select(&:author)
     @workflows['assignee'] = workflows.select(&:assignee)
+  end
 
-    if request.post? && @roles && @trackers && params[:transitions]
+  def save
+    if @roles && @trackers && params[:transitions]
       transitions = params[:transitions].deep_dup
       transitions.each do |_old_status_id, transitions_by_new_status|
         transitions_by_new_status.each do |_new_status_id, transition_by_rule|
@@ -25,8 +28,9 @@ class ProjectWorkflowsController < WorkflowsController
       end
       ProjectWorkflow.replace_workflows(@trackers, @roles, transitions, @project)
       flash[:notice] = l(:notice_successful_update)
-      return
     end
+
+    redirect_to edit_project_workflows_path(role_id: @roles, tracker_id: @trackers)
   end
 
   def permissions

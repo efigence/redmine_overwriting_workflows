@@ -64,7 +64,7 @@ class ProjectWorkflow < ActiveRecord::Base
       records = ProjectWorkflow.where(project_id: context.id,
                                                         tracker_id: trackers.map(&:id),
                                                         role_id: roles.map(&:id),
-                                                        kind: "WorkflowPermission").to_a
+                                                        kind: "WorkflowTransition").to_a
 
       transitions.each do |old_status_id, transitions_by_new_status|
         transitions_by_new_status.each do |new_status_id, transition_by_rule|
@@ -77,7 +77,7 @@ class ProjectWorkflow < ActiveRecord::Base
                   r.new_status_id == new_status_id.to_i &&
                   r.tracker_id == tracker.id &&
                   r.role_id == role.id &&
-                  r.kind == "WorkflowPermission" &&
+                  r.kind == "WorkflowTransition" &&
                   !r.destroyed?
                 }
 
@@ -98,7 +98,7 @@ class ProjectWorkflow < ActiveRecord::Base
                                                             new_status_id: new_status_id,
                                                             tracker_id: tracker.id,
                                                             role_id: role.id,
-                                                            kind: "WorkflowPermission")
+                                                            kind: "WorkflowTransition")
                     records << w
                   end
                   w.author = true if rule == "author"
