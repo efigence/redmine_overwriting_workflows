@@ -10,7 +10,7 @@ issues_001:
   category_id: 1
   description: Unable to print recipes
   tracker_id: 1
-  assigned_to_id:
+  assigned_to_id: 3
   author_id: 2
   status_id: 1
   start_date: <%= 1.day.ago.to_date.to_s(:db) %>

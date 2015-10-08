@@ -1,6 +1,6 @@
 require File.expand_path('../../test_helper', __FILE__)
 
-class IssuesControllerTest < Redmine::IntegrationTest
+class IssuesControllerTest < ActionController::TestCase
   fixtures :projects,
            :users, :email_addresses,
            :roles,
@@ -28,32 +28,31 @@ class IssuesControllerTest < Redmine::IntegrationTest
            :repositories,
            :changesets
 
+  include Redmine::I18n
+
   def setup
-    @project = projects(:projects_001)
-    @issue = issues(:issues_001)
+    User.current = nil
   end
 
-  def test_should_see_proper_transitions
-    log_user('dlopper', 'foo')
-    assert User.current.members.where(project_id: @project.id).any?
-    assert_equal 'Developer', User.current.members.where(project_id: @project.id).first.roles.first.name
-    assert_equal 3, @project.issues.count
-
-    get project_path(@project)
+  def test_show_by_developer
+    @request.session[:user_id] = 3
+    get :show, :id => 1
+    byebug
     assert_response :success
-
-    get project_issues_path(@project)
-    assert_response :success
-
-    get issues_path
-    assert_response :success
-
-    # get '/issues/1'
-    # assert_response :success
-
-    get issue_path(@issue)
-    assert_response :success
-
+    # assert_select 'a', :text => /Quote/
+    # assert_select 'form#issue-form' do
+    #   assert_select 'fieldset' do
+    #     assert_select 'legend', :text => 'Change properties'
+    #     assert_select 'input[name=?]', 'issue[subject]'
+    #   end
+    #   assert_select 'fieldset' do
+    #     assert_select 'legend', :text => 'Log time'
+    #     assert_select 'input[name=?]', 'time_entry[hours]'
+    #   end
+    #   assert_select 'fieldset' do
+    #     assert_select 'legend', :text => 'Notes'
+    #     assert_select 'textarea[name=?]', 'issue[notes]'
+    #   end
+    # end
   end
-
 end

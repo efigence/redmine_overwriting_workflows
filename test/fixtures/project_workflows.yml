@@ -1,20 +1,23 @@
 ProjectWorkflows_001:
-  new_status_id: 2
-  role_id: 1
+  project_id: 1
+  new_status_id: 4
+  role_id: 2
   old_status_id: 1
   id: 1
   tracker_id: 1
   kind: WorkflowTransition
 ProjectWorkflows_002:
-  new_status_id: 3
-  role_id: 1
+  project_id: 1
+  new_status_id: 5
+  role_id: 2
   old_status_id: 1
   id: 2
   tracker_id: 1
   kind: WorkflowTransition
 ProjectWorkflows_003:
-  new_status_id: 4
-  role_id: 1
+  project_id: 1
+  new_status_id: 6
+  role_id: 2
   old_status_id: 1
   id: 3
   tracker_id: 1

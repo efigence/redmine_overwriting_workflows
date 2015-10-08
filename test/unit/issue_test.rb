@@ -5,6 +5,7 @@ class IssueTest < ActiveSupport::TestCase
 
   def test_new_statuses_allowed_to
     WorkflowTransition.delete_all
+    ProjectWorkflow.delete_all
     WorkflowTransition.create!(role_id: 1,
                                tracker_id: 1,
                                old_status_id: 1,
@@ -25,6 +26,7 @@ class IssueTest < ActiveSupport::TestCase
 
   def test_new_statuses_allowed_to_with_project
     WorkflowTransition.delete_all
+    ProjectWorkflow.delete_all
     WorkflowTransition.create!(role_id: 1,
                                tracker_id: 1,
                                old_status_id: 1,
@@ -49,6 +51,6 @@ class IssueTest < ActiveSupport::TestCase
                             project_id: 1,
                             author_id: 1)
 
-    assert_equal [1, 4], issue.new_statuses_allowed_to(user, false, project).map(&:id)
+    assert_equal [1, 4], issue.new_statuses_allowed_to(user, false).map(&:id)
   end
 end

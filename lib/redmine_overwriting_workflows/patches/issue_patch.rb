@@ -14,7 +14,7 @@ module RedmineOverwritingWorkflows
             return {} if roles.empty?
 
             result = {}
-            workflow_permissions = ProjectWorkflow.where(:tracker_id => tracker_id, :old_status_id => status_id, :role_id => roles.map(&:id), :project => self.project_id, :kind => "WorkflowPermission").to_a
+            workflow_permissions = ProjectWorkflow.where(:tracker_id => tracker_id, :old_status_id => status_id, :role_id => roles.map(&:id), :project_id => self.project_id, :kind => "WorkflowPermission").to_a
             if workflow_permissions.empty?
               workflow_permissions = WorkflowPermission.where(:tracker_id => tracker_id, :old_status_id => status_id, :role_id => roles.map(&:id)).to_a
             end
