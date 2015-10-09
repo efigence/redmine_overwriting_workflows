@@ -13,7 +13,7 @@ class ProjectWorkflowsControllerTest < Redmine::IntegrationTest
 
     get settings_project_path(@project)
     assert_response :success
-    assert_select "#tab-workflows"
+    assert_select '#tab-workflows'
 
     get edit_project_workflows_path(@project)
     assert_response :success
@@ -28,7 +28,7 @@ class ProjectWorkflowsControllerTest < Redmine::IntegrationTest
 
     get settings_project_path(@project)
     assert_response :success
-    assert_select "#tab-workflows"
+    assert_select '#tab-workflows'
 
     get edit_project_workflows_path(@project)
     assert_response :success
@@ -43,7 +43,7 @@ class ProjectWorkflowsControllerTest < Redmine::IntegrationTest
 
     get settings_project_path(@project)
     assert_response :success
-    assert_select "#tab-workflows", false
+    assert_select '#tab-workflows', false
 
     get edit_project_workflows_path(@project)
     assert_response :redirect

@@ -6,7 +6,7 @@ Redmine::Plugin.register :redmine_overwriting_workflows do
   url 'https://github.com/efigence/redmine_overwriting_workflows'
   author_url 'https://github.com/efigence'
 
-  permission :manage_workflows, { project_workflows: [:edit, :save, :permissions] }
+  permission :manage_workflows, project_workflows: [:edit, :save, :permissions]
 
   ActionDispatch::Callbacks.to_prepare do
     require 'redmine_overwriting_workflows/patches/issue_patch'

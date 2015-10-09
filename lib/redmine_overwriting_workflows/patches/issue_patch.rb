@@ -5,7 +5,7 @@ module RedmineOverwritingWorkflows
         base.class_eval do
           unloadable
 
-          def workflow_rule_by_attribute(user=nil)
+          def workflow_rule_by_attribute(user = nil)
             return @workflow_rule_by_attribute if @workflow_rule_by_attribute && user.nil?
 
             user_real = user || User.current
@@ -14,9 +14,15 @@ module RedmineOverwritingWorkflows
             return {} if roles.empty?
 
             result = {}
-            workflow_permissions = ProjectWorkflow.where(:tracker_id => tracker_id, :old_status_id => status_id, :role_id => roles.map(&:id), :project_id => self.project_id, :kind => "WorkflowPermission").to_a
+            workflow_permissions = ProjectWorkflow.where(tracker_id: tracker_id,
+                                                         old_status_id: status_id,
+                                                         role_id: roles.map(&:id),
+                                                         project_id: project_id,
+                                                         kind: 'WorkflowPermission').to_a
             if workflow_permissions.empty?
-              workflow_permissions = WorkflowPermission.where(:tracker_id => tracker_id, :old_status_id => status_id, :role_id => roles.map(&:id)).to_a
+              workflow_permissions = WorkflowPermission.where(tracker_id: tracker_id,
+                                                              old_status_id: status_id,
+                                                              role_id: roles.map(&:id)).to_a
             end
             if workflow_permissions.any?
               workflow_rules = workflow_permissions.inject({}) do |h, wp|
@@ -59,7 +65,7 @@ module RedmineOverwritingWorkflows
 
               initial_assigned_to_id = assigned_to_id_changed? ? assigned_to_id_was : assigned_to_id
               assignee_transitions_allowed = initial_assigned_to_id.present? &&
-              (user.id == initial_assigned_to_id || user.group_ids.include?(initial_assigned_to_id))
+                                             (user.id == initial_assigned_to_id || user.group_ids.include?(initial_assigned_to_id))
 
               statuses = []
               if initial_status
@@ -68,8 +74,8 @@ module RedmineOverwritingWorkflows
                   tracker,
                   author == user,
                   assignee_transitions_allowed,
-                  self.project
-                  )
+                  project
+                )
               end
               statuses << initial_status unless statuses.empty?
               statuses << default_status if include_default

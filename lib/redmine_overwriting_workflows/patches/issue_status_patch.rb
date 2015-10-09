@@ -31,11 +31,16 @@ module RedmineOverwritingWorkflows
               if !context.nil? && context.is_a?(Project) && !find_project_workflows(roles, tracker, context).empty?
                 scope = IssueStatus
                         .joins(:project_workflows)
-                        .where(project_workflows: { old_status_id: id, role_id: roles.map(&:id), tracker_id: tracker.id, project_id: context.id })
+                        .where(project_workflows: { old_status_id: id,
+                                                    role_id: roles.map(&:id),
+                                                    tracker_id: tracker.id,
+                                                    project_id: context.id })
               else
                 scope = IssueStatus
                         .joins(:workflow_transitions_as_new_status)
-                        .where(workflows: { old_status_id: id, role_id: roles.map(&:id), tracker_id: tracker.id })
+                        .where(workflows: { old_status_id: id,
+                                            role_id: roles.map(&:id),
+                                            tracker_id: tracker.id })
               end
 
               unless author && assignee
@@ -54,7 +59,9 @@ module RedmineOverwritingWorkflows
 
           private
           def find_project_workflows(roles, tracker, project)
-            ProjectWorkflow.where(project_id: project.id, tracker_id: tracker.id, role_id: roles.map(&:id))
+            ProjectWorkflow.where(project_id: project.id,
+                                  tracker_id: tracker.id,
+                                  role_id: roles.map(&:id))
           end
         end
       end
