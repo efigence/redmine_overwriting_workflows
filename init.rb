@@ -8,9 +8,8 @@ Redmine::Plugin.register :redmine_overwriting_workflows do
 
   permission :manage_workflows, project_workflows: [:edit, :save, :permissions]
 
-  require 'redmine_overwriting_workflows/patches/issue_patch'
-
   ActionDispatch::Callbacks.to_prepare do
+    require 'redmine_overwriting_workflows/patches/issue_patch'
     require 'redmine_overwriting_workflows/patches/issue_status_patch'
     require 'redmine_overwriting_workflows/patches/projects_helper_patch'
   end
