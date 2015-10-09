@@ -1,4 +1,4 @@
-# Redmine Overwriting Workflows plugin
+# Redmine Overwriting Workflows plugin [![Build Status](https://travis-ci.org/efigence/redmine_overwriting_workflows.svg?branch=master)](https://travis-ci.org/efigence/redmine_overwriting_workflows)
 
 #### Plugin which enables overwriting workflows in scope of a project.
 
